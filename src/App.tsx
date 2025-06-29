@@ -173,15 +173,15 @@ function App() {
       // Method 2: If not found by studentId, try username match with roll number
       if (!studentRecord) {
         studentRecord = students.find(s => 
-          s.rollNumber.toLowerCase() === currentUser.username.toLowerCase()
+          s.rollNumber && s.rollNumber.toLowerCase() === currentUser.username.toLowerCase()
         );
       }
       
       // Method 3: Try partial name match
       if (!studentRecord) {
         studentRecord = students.find(s => 
-          s.name.toLowerCase().includes(currentUser.username.toLowerCase()) ||
-          currentUser.username.toLowerCase().includes(s.name.toLowerCase().split(' ')[0])
+          s.name && s.name.toLowerCase().includes(currentUser.username.toLowerCase()) ||
+          currentUser.username.toLowerCase().includes(s.name && s.name.toLowerCase().split(' ')[0])
         );
       }
       
