@@ -21,8 +21,8 @@ function App() {
   const [users, setUsers] = useLocalStorage<User[]>('users', [
     {
       id: 'admin-1',
-      username: 'admin',
-      password: 'admin123',
+      username: 'BSCS',
+      password: 'SECOND',
       role: 'admin',
       createdAt: new Date().toISOString()
     },
