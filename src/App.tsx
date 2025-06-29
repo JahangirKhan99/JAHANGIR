@@ -155,21 +155,37 @@ function App() {
     }
   };
 
-  // Filter data based on user role
+  // Filter data based on user role - IMPROVED FOR STUDENTS
   const getFilteredData = () => {
     if (!currentUser) return { students: [], subjects: [], attendanceRecords: [] };
     
     if (currentUser.role === 'admin') {
       return { students, subjects, attendanceRecords };
     } else {
-      // Student can only see their own records
-      const studentRecord = students.find(s => s.id === currentUser.studentId);
-      const filteredStudents = studentRecord ? [studentRecord] : [];
-      const filteredRecords = attendanceRecords.filter(r => r.studentId === currentUser.studentId);
+      // For students - show all data but filter attendance records to their own
+      // First, try to find student by studentId if provided
+      let studentRecord = null;
+      if (currentUser.studentId) {
+        studentRecord = students.find(s => s.id === currentUser.studentId);
+      }
+      
+      // If not found by studentId, try to find by username match with roll number
+      if (!studentRecord) {
+        studentRecord = students.find(s => 
+          s.rollNumber.toLowerCase() === currentUser.username.toLowerCase() ||
+          s.name.toLowerCase().includes(currentUser.username.toLowerCase())
+        );
+      }
+      
+      // If still not found, show all students but filter attendance
+      const filteredStudents = studentRecord ? [studentRecord] : students;
+      const filteredRecords = studentRecord 
+        ? attendanceRecords.filter(r => r.studentId === studentRecord.id)
+        : []; // Show empty if no student record found
       
       return {
         students: filteredStudents,
-        subjects,
+        subjects, // Show all subjects
         attendanceRecords: filteredRecords
       };
     }

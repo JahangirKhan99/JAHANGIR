@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, BookOpen, CheckSquare, TrendingUp, Plus, BarChart3 } from 'lucide-react';
+import { Users, BookOpen, CheckSquare, TrendingUp, Plus, BarChart3, AlertCircle } from 'lucide-react';
 import { Student, Subject, AttendanceRecord } from '../types';
 import { calculateAttendanceStats } from '../utils/attendanceUtils';
 
@@ -66,10 +66,10 @@ const Dashboard: React.FC<DashboardProps> = ({
   ];
 
   const quickActions = [
-    { label: 'Add Student', action: () => onViewChange('students'), color: 'bg-blue-600', icon: Users },
-    { label: 'Add Subject', action: () => onViewChange('subjects'), color: 'bg-green-600', icon: BookOpen },
-    { label: 'Mark Attendance', action: () => onViewChange('attendance'), color: 'bg-purple-600', icon: CheckSquare },
-    { label: 'View Reports', action: () => onViewChange('reports'), color: 'bg-indigo-600', icon: BarChart3 }
+    { label: 'View Students', action: () => onViewChange('students'), color: 'bg-blue-600', icon: Users },
+    { label: 'View Subjects', action: () => onViewChange('subjects'), color: 'bg-green-600', icon: BookOpen },
+    { label: 'View Reports', action: () => onViewChange('reports'), color: 'bg-purple-600', icon: BarChart3 },
+    { label: 'Export PDF', action: () => onViewChange('export'), color: 'bg-indigo-600', icon: CheckSquare }
   ];
 
   return (
@@ -79,6 +79,22 @@ const Dashboard: React.FC<DashboardProps> = ({
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Dashboard</h2>
           <p className="text-gray-600 text-sm sm:text-base">Overview of your attendance system</p>
         </div>
+
+        {/* No Data Warning for Students */}
+        {totalStudents === 0 && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6">
+            <div className="flex items-start space-x-3">
+              <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+              <div className="text-sm text-yellow-800">
+                <p className="font-medium">No Student Data Found</p>
+                <p className="mt-1">
+                  If you are a student, please contact your administrator to add your record to the system.
+                  Your attendance data will appear here once you are registered.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -139,9 +155,9 @@ const Dashboard: React.FC<DashboardProps> = ({
                     <div key={record.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-gray-900 text-sm sm:text-base truncate">
-                          {student?.name}
+                          {student?.name || 'Unknown Student'}
                         </p>
-                        <p className="text-xs sm:text-sm text-gray-600 truncate">{subject?.name}</p>
+                        <p className="text-xs sm:text-sm text-gray-600 truncate">{subject?.name || 'Unknown Subject'}</p>
                         <p className="text-xs text-gray-500">{record.date}</p>
                       </div>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
@@ -158,13 +174,20 @@ const Dashboard: React.FC<DashboardProps> = ({
           ) : (
             <div className="text-center py-8">
               <CheckSquare className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-              <p className="text-gray-600 text-sm sm:text-base">No attendance records yet</p>
-              <button
-                onClick={() => onViewChange('attendance')}
-                className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
-              >
-                Start Marking Attendance
-              </button>
+              <p className="text-gray-600 text-sm sm:text-base">
+                {totalStudents === 0 
+                  ? 'No attendance records available. Please contact your administrator.'
+                  : 'No attendance records yet'
+                }
+              </p>
+              {totalStudents > 0 && (
+                <button
+                  onClick={() => onViewChange('reports')}
+                  className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
+                >
+                  View Reports
+                </button>
+              )}
             </div>
           )}
         </div>
