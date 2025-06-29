@@ -211,7 +211,7 @@ const Login: React.FC<LoginProps> = ({ users, onLogin, onCreateAccount }) => {
           <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
             <p className="text-sm text-blue-800">
               <strong>Demo Accounts:</strong><br />
-              Admin: admin / admin123<br />
+              Admin: BSCS / SECOND<br />
               Student: student / student123
             </p>
           </div>
