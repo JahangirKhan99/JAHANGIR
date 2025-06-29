@@ -2,7 +2,6 @@ export interface Student {
   id: string;
   name: string;
   rollNumber: string;
-  email: string;
   phone: string;
   program: string;
   semester: number;
@@ -32,4 +31,21 @@ export interface AttendanceStats {
   presentClasses: number;
   absentClasses: number;
   percentage: number;
+}
+
+export interface User {
+  id: string;
+  username: string;
+  password: string;
+  role: 'admin' | 'student';
+  studentId?: string;
+  createdAt: string;
+}
+
+export interface BackupData {
+  students: Student[];
+  subjects: Subject[];
+  attendanceRecords: AttendanceRecord[];
+  users: User[];
+  timestamp: string;
 }
