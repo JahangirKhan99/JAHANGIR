@@ -155,33 +155,45 @@ function App() {
     }
   };
 
-  // Filter data based on user role - IMPROVED FOR STUDENTS
+  // IMPROVED: Filter data based on user role - Better student data filtering
   const getFilteredData = () => {
     if (!currentUser) return { students: [], subjects: [], attendanceRecords: [] };
     
     if (currentUser.role === 'admin') {
       return { students, subjects, attendanceRecords };
     } else {
-      // For students - show all data but filter attendance records to their own
-      // First, try to find student by studentId if provided
+      // For students - find their record using multiple methods
       let studentRecord = null;
+      
+      // Method 1: Try to find by studentId if provided
       if (currentUser.studentId) {
         studentRecord = students.find(s => s.id === currentUser.studentId);
       }
       
-      // If not found by studentId, try to find by username match with roll number
+      // Method 2: If not found by studentId, try username match with roll number
       if (!studentRecord) {
         studentRecord = students.find(s => 
-          s.rollNumber.toLowerCase() === currentUser.username.toLowerCase() ||
-          s.name.toLowerCase().includes(currentUser.username.toLowerCase())
+          s.rollNumber.toLowerCase() === currentUser.username.toLowerCase()
         );
       }
       
-      // If still not found, show all students but filter attendance
-      const filteredStudents = studentRecord ? [studentRecord] : students;
+      // Method 3: Try partial name match
+      if (!studentRecord) {
+        studentRecord = students.find(s => 
+          s.name.toLowerCase().includes(currentUser.username.toLowerCase()) ||
+          currentUser.username.toLowerCase().includes(s.name.toLowerCase().split(' ')[0])
+        );
+      }
+      
+      // Method 4: For demo purposes, if username is 'student', find any student
+      if (!studentRecord && currentUser.username === 'student' && students.length > 0) {
+        studentRecord = students[0]; // Use first student for demo
+      }
+      
+      const filteredStudents = studentRecord ? [studentRecord] : [];
       const filteredRecords = studentRecord 
         ? attendanceRecords.filter(r => r.studentId === studentRecord.id)
-        : []; // Show empty if no student record found
+        : [];
       
       return {
         students: filteredStudents,
